@@ -63,7 +63,7 @@ library(tidyr)
 shinhan <- read_xlsx("kdx2020/data/Shinhancard.xlsx")
 ```
 
-사진
+<img src="https://raw.githubusercontent.com/idanjfhgkwl/Project/main/kdx2020/img/K-001.png">
 
 ### 3. 데이터 전처리
 
@@ -89,8 +89,6 @@ shinhan <- shinhan %>%
   select(-4)
 ```
 
-사진
-
 #### 3-4) 19년 2~4월과 20년 2~4월 데이터를 비교하기 위한 준비
 
 ```r
@@ -101,6 +99,8 @@ shinhan_covid <- shinhan %>%
       일별 >= "2020-02-01" & 일별 < "2020-05-01"  ~ "2020",
       TRUE ~ "기타"))
 ```
+
+<img src="https://raw.githubusercontent.com/idanjfhgkwl/Project/main/kdx2020/img/K-20201027-140940.png">
 
 ### 4. 모델링
 
@@ -129,7 +129,7 @@ shinhan %>%
        y="이용건수", x= "구매기간") 
 ```
 
-사진 Rplot
+<img src="https://raw.githubusercontent.com/idanjfhgkwl/Project/main/kdx2020/img/Rplot.png">
 
 *	외식업의 현황을 확인하기 위해 시계열 그래프를 생성함
 *	업종 내의 항목을 표현하기 위해 groupby 설정
@@ -157,7 +157,7 @@ shinhan %>%
        x= " ")
 ```
 
-사진 Rplot01
+<img src="https://raw.githubusercontent.com/idanjfhgkwl/Project/main/kdx2020/img/Rplot01.png">
 
 * 업종별 카드사용 현황을 세부적으로 확인 하기위해 바형 그래프로 설정함
 
@@ -185,7 +185,7 @@ shinhan %>%
         legend.position = "top")
 ```
 
-사진 Rplot02
+<img src="https://raw.githubusercontent.com/idanjfhgkwl/Project/main/kdx2020/img/Rplot02.png">
 
 *	외식업의 현황을 좀더 자세하게 확인하기 위하여 연령대별로 기간그래프를 생성함?
 *	평소에는 20대의 매출이 많았으나 코로나 대책인 거리두기의 일환으로 20대의 매출이 크게 감소한 것으로 생각됨
@@ -215,7 +215,7 @@ shinhan %>%
         legend.position = "top")
 ```
 
-사진 Rplot03
+<img src="https://raw.githubusercontent.com/idanjfhgkwl/Project/main/kdx2020/img/Rplot03.png">
 
 * 연령대별 지출항목을 좀더 명확히 확인하기 위해 연령대별로 업종을 나눔
 *	20, 30대의 매출이 가장 높은 업종은 기타요식(유흥음식/주점, 나이트클럽)으로 확인되고 40,50대의 경우 한식의 비중이 가장 높은 것을 확인됨
@@ -244,7 +244,7 @@ shinhan_covid %>%
         legend.position = "top")
 ```
 
-사진 Rplot04
+<img src="https://raw.githubusercontent.com/idanjfhgkwl/Project/main/kdx2020/img/Rplot04.png">
 
 * 시계열그래프, 기간그래프를 확인한 결과 코로나 시기에 맞물려 감소하다 다시 증가하는 추세를 보여, 증감이 모두 코로나로 인해 발생한 것인지 확인하기 위해 전년동월 데이터를 활용하기로 함
 * 전년도, 금년도 데이터를 비교한 결과 전년대비 업종별 매출이 모두 감소한 것을 확인하여 코로나로 인해 매출이 감소한 것으로 추정함 
