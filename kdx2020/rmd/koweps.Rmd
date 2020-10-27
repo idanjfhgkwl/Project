@@ -1,0 +1,179 @@
+---
+title: "Untitled"
+author: "Unnamed"
+date: '2020 10 22 '
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+# 따라하기: [R 데이터 분석,시각화] 한국복지패널 데이터 분석 실습
+https://blog.itpaper.co.kr/rdata-%ED%95%9C%EA%B5%AD%EB%B3%B5%EC%A7%80%ED%8C%A8%EB%84%90/
+
+## 일반적인 데이터 분석 과정
+
+1. 데이터 수집<br>
+2. 데이터 빈도 확인<br>
+3. 데이터 정제<br>
+4. 변수 검토 및 데이터 전처리
+5. 변수 간 관계 분석 후 시각화
+
+
+
+## 한국복지패널 데이터 확인
+
+
+
+## 필요한 패키지 설치 및 로드
+
+### 패키지 가져오기
+
+```{r}
+# 라이브러리 내려받기
+REPO_URL <- "https://cran.seoul.go.kr/"
+if (!require(foreign)) install.packages("foreign", repos=REPO_URL)
+if (!require(dplyr)) install.packages("dplyr", repos=REPO_URL)
+if (!require(ggplot2)) install.packages("ggplot2", repos=REPO_URL)
+if (!require("reshape2"))     install.packages("reshape2", repos=REPO_URL)
+
+# 라이브러리 로드
+library(foreign)  # SPSS용 데이터 파일을 읽어들일 수 있는 기능을 제공한다.
+library(dplyr)
+library(ggplot2)
+library(reshape2) # 피벗테이블 구성을 위한 패키지
+```
+<br>
+
+### 데이터셋 가져오기
+
+```r
+koweps_raw <- read.spss(file="http://itpaper.co.kr/demo/r/Koweps_hpda12_2017_beta1.sav", to.data.frame=TRUE)
+```
+<br>
+
+```{r}
+# 데이터가 매우 크므로 상위 6건만 확인
+head(koweps_raw)
+```
+
+
+
+
+# 라이브러리 내려받기
+REPO_URL <- "https://cran.seoul.go.kr/"
+if (!require(foreign)) install.packages("foreign", repos=REPO_URL)
+if (!require(dplyr)) install.packages("dplyr", repos=REPO_URL)
+if (!require(ggplot2)) install.packages("ggplot2", repos=REPO_URL)
+if (!require("reshape2"))     install.packages("reshape2", repos=REPO_URL)
+
+# 라이브러리 로드
+library(foreign)  # SPSS용 데이터 파일을 읽어들일 수 있는 기능을 제공한다.
+library(dplyr)
+library(ggplot2)
+library(reshape2) # 피벗테이블 구성을 위한 패키지
+
+# 데이터셋 가져오기
+
+koweps_raw <- read.spss(file="http://itpaper.co.kr/demo/r/Koweps_hpda12_2017_beta1.sav", to.data.frame=TRUE)
+
+# 데이터가 매우 크므로 상위 6건만 확인
+head(원본데이터)
+
+# 조사대상들에 대한 성별 분포 조사하기
+
+성별추출 <- shinhan %>% select(성별)
+head(성별추출)
+
+성별df <- rename(성별추출, 성별코드 = 성별)
+head(성별df)
+
+table(성별df$성별코드)
+
+성별df <- 성별df %>% mutate(성별 = ifelse(성별코드 == "M", "남자", "여자"))
+head(성별df)
+
+ggplot(data = 성별df) +
+  geom_bar(aes(x = 성별, fill = 성별)) +
+  # 배경을 흰색으로 설정
+  theme_bw() +
+  # 그래프 타이틀 설정
+  ggtitle("성별 분포") +
+  # x축 제목 설정
+  xlab("성별") +
+  # y축 제목 설정
+  ylab("분포수(명)") +
+  # y축 간격
+  coord_cartesian(ylim = c(97770, 97820)) +
+  # 각 텍스트의 색상, 크기, 각도, 글꼴 설정
+  theme(plot.title=element_text(color="#0066ff", size=25, face="bold", hjust=0.5),
+        axis.title.x=element_text(color="#999999", size=18, face="bold"),
+        axis.title.y=element_text(color="#999999", size=18, face="bold"),
+        axis.text.x=element_text(color="#000000", size=16, angle=0),
+        axis.text.y=element_text(color="#000000", size=16, angle=0)) +
+  # 범주 설정
+  theme(legend.title = element_blank(),
+        legend.text = element_text(face="bold", size=15, color="#330066"),
+        legend.key = element_rect(color="red", fill="white"),
+        legend.key.size = unit(1,"cm"),
+        legend.box.background = element_rect(fill="skyblue"),
+        legend.box.margin = margin(6, 6, 6, 6))
+
+
+
+# 성별에 따른 평균 카드이용건수 차이 분석
+
+성별카드이용건수추출 <- shinhan %>% select(성별, `카드이용건수(천건)`)
+head(성별카드이용건수추출)
+                                   
+성별카드이용건수df <- rename(성별카드이용건수추출, 성별코드 = 성별, 카드이용건수 = `카드이용건수(천건)`)
+head(성별카드이용건수df)
+
+성별카드이용건수df <- 성별카드이용건수df %>% mutate(성별 = ifelse(성별코드 == "M", "남자", "여자"))
+head(성별카드이용건수df)
+
+colSums(is.na(성별카드이용건수df))
+분석결과df <- 성별카드이용건수df %>%
+  group_by(성별) %>%
+  summarise(평균카드이용건수 = mean(카드이용건수, na.rm = TRUE))
+분석결과df
+
+ggplot(data=분석결과df) +
+  geom_col(aes(x=성별,y=평균카드이용건수,fill=성별)) +
+  # 배경을 흰색으로 설정
+  theme_bw() +
+  # 그래프 타이틀 설정
+  ggtitle("성별 평균 카드이용건수") +
+  # x축 제목 설정
+  xlab("성별") +
+  # y축 제목 설정
+  ylab("평균 카드이용건수(천건)") +
+  # y축 간격
+  scale_y_continuous(breaks=seq(0, 110, 10))
+
+
+
+# 나이에 따른 평균 월급의 변화
+
+분석결과df <- shinhan %>%
+  group_by(연령대별) %>%
+  summarise(평균 = mean(`카드이용건수(천건)`))
+head(분석결과df)
+
+options(repr.plot.width=15, repr.plot.height=10, warn=-1)
+
+ggplot(data = 분석결과df) +
+  geom_line(aes(x=연령대별, y=평균, group=1), color="#ff6600") +
+  theme_bw()
+
+
+
+
+
+
+
+
+
